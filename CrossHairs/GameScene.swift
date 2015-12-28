@@ -7,6 +7,7 @@
 //
 
 import SpriteKit
+import GameKit
 
 class GameScene: SKScene {
     
@@ -25,9 +26,12 @@ class GameScene: SKScene {
     var remainingLabel = SKLabelNode()
     var remainingCount = SKLabelNode()
     var tapToStartLabel = SKLabelNode()
+    var personalBestLabel = SKLabelNode()
+    var personalBestCountLabel = SKLabelNode()
     
     var level = 1
     var movesRemaining = 1
+    var maxLevel = NSUserDefaults.standardUserDefaults().integerForKey("maxLevel")
     
     var movingSquare = SKSpriteNode()
     var arrayIndexNumber = 0
@@ -38,7 +42,7 @@ class GameScene: SKScene {
     var isHorizontal = false
     var startRightSide = true
     var gameStarted = false
-
+    
     // Sound Actions
     var completedSound = SKAction()
     var errorSound = SKAction()
@@ -46,10 +50,8 @@ class GameScene: SKScene {
     // MARK: - Init
     
     override init(size: CGSize) {
-        
         super.init(size: size)
-        
-        
+    
         // Horizontal and Vertical Arrays for square positions
         horizontalPosArray = [
             CGPoint(x: frame.size.width/2 - 135, y: frame.size.height/2),
@@ -59,7 +61,6 @@ class GameScene: SKScene {
             CGPoint(x: frame.size.width/2 + 90, y: frame.size.height/2),
             CGPoint(x: frame.size.width/2 + 135, y: frame.size.height/2)
         ]
-        
         verticalPosArray = [
             CGPoint(x: frame.size.width/2, y: frame.size.height/2 - 135),
             CGPoint(x: frame.size.width/2, y: frame.size.height/2 - 90),
@@ -79,7 +80,6 @@ class GameScene: SKScene {
             CGPoint(x: frame.size.width/2 + 90, y: frame.size.height/2),
             CGPoint(x: frame.size.width/2 + 135, y: frame.size.height/2)
         ]
-        
         movingSquareVerticalPosArray = [
             CGPoint(x: frame.size.width/2, y: frame.size.height/2 - 135),
             CGPoint(x: frame.size.width/2, y: frame.size.height/2 - 90),
@@ -89,11 +89,10 @@ class GameScene: SKScene {
             CGPoint(x: frame.size.width/2, y: frame.size.height/2 + 90),
             CGPoint(x: frame.size.width/2, y: frame.size.height/2 + 135)
         ]
-    
+        
         // Initialize actions to play sound
         completedSound = SKAction.playSoundFileNamed("completed.mp3", waitForCompletion: false)
         errorSound = SKAction.playSoundFileNamed("error.wav", waitForCompletion: false)
-
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -109,35 +108,50 @@ class GameScene: SKScene {
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         if !gameStarted {
+            
+            // Game has starteds
             gameStarted = true
+            
+            // Hide 'Tap To Start' label
             tapToStartLabel.hidden = true
+            
+            // Randomly set moving square direction and side
             setRandomMovingSquareDirection()
             setRandomSquareStartSide()
             
+            // Define speed of square
             let speed = Double(0.5) / Double(level)
             time = NSTimer.scheduledTimerWithTimeInterval(speed, target: self, selector: Selector("moveTargetSquare"), userInfo: nil, repeats: true)
+            
+            // Display the sqaure
             movingSquare.hidden = false
             
         } else {
+            // Game is already started
+            // Check is square is in center on touch
             if movingSquare.position == CGPoint(x: frame.size.width/2, y: frame.size.height/2) {
+                
+                // Subtract remaing moves
                 movesRemaining -= 1
                 remainingCount.text = "\(movesRemaining)"
                 
+                // Level completed if remaining moves is 0
                 if movesRemaining == 0 {
                     levelCompleted()
                 }
                 
                 arrayIndexNumber = 0
+                
+                // Randomly set moving square direction
                 setRandomMovingSquareDirection()
             } else {
+                // Game is over
                 gameOver()
             }
         }
     }
     
-    override func update(currentTime: CFTimeInterval) {
-        
-    }
+    override func update(currentTime: CFTimeInterval) {}
     
     // MARK: - Helper Methods
     
@@ -160,65 +174,96 @@ class GameScene: SKScene {
         }
     }
     
-
+    
     // MARK: - Setup Game
-
+    
     func layoutGame() {
         backgroundColor = SKColor(red: 47.0/255.0, green: 47.0/255.0, blue: 47.0/255.0, alpha: 1/0)
         
+        // Check is current level is greater than max level
+        if level > maxLevel {
+            // Set the new best level reached
+            NSUserDefaults.standardUserDefaults().setInteger(level, forKey: "maxLevel")
+        }
+        
+        // Setup Labels and Cross background
         setupLabels()
         createCrossHairsBG()
         
+        // Load squares
         positionInArray(verticalPosArray, spritesArray: &verticalSquaresArray)
         positionInArray(horizontalPosArray, spritesArray: &horizontalSquaresArray)
         
-        targetSquare()
+        // Load the moving square
+        createMovingSquare()
+        
+        // Allow user interaction
         userInteractionEnabled = true
     }
     
     func setupLabels() {
         movesRemaining = level
         
+        // Tap To Start
         tapToStartLabel = SKLabelNode(fontNamed: "AvenirNext-Bold")
         tapToStartLabel.position = CGPoint(x: self.frame.width/2, y: self.frame.height/2 + self.frame.height/2.5)
         tapToStartLabel.fontColor = SKColor(red: 236.0/255.0, green: 240.0/255.0, blue: 241.0/255.0, alpha: 1.0)
         tapToStartLabel.text = "Tap To Start"
         addChild(tapToStartLabel)
         
+        // Level
         levelLabel = SKLabelNode(fontNamed: "AvenirNext-Bold")
         levelLabel.position = CGPoint(x: self.frame.width/2, y: self.frame.height/2 + self.frame.height/3)
         levelLabel.fontColor = SKColor(red: 236.0/255.0, green: 240.0/255.0, blue: 241.0/255.0, alpha: 1.0)
         levelLabel.text = "Level \(level)"
         addChild(levelLabel)
         
+        // Remaining:
         remainingLabel = SKLabelNode(fontNamed: "AvenirNext")
         remainingLabel.fontSize = 15
-        remainingLabel.position = CGPoint(x: self.frame.width/2, y: self.frame.height/6)
+        remainingLabel.position = CGPoint(x: self.frame.width/1.5, y: self.frame.height/6)
         remainingLabel.fontColor = SKColor(red: 236.0/255.0, green: 240.0/255.0, blue: 241.0/255.0, alpha: 1.0)
-        remainingLabel.text = "Remaining"
+        remainingLabel.text = "Remaining: "
         addChild(remainingLabel)
         
         remainingCount = SKLabelNode(fontNamed: "AvenirNext")
         remainingCount.fontSize = 15
-        remainingCount.position = CGPoint(x: self.frame.width/2, y: self.frame.height/8)
+        remainingCount.position = CGPoint(x: self.frame.width/1.2, y: self.frame.height/6)
         remainingCount.fontColor = SKColor(red: 236.0/255.0, green: 240.0/255.0, blue: 241.0/255.0, alpha: 1.0)
         remainingCount.text = "\(movesRemaining)"
         addChild(remainingCount)
+        
+        // Personal Best
+        personalBestLabel = SKLabelNode(fontNamed: "AvenirNext")
+        personalBestLabel.fontSize = 15
+        personalBestLabel.position = CGPoint(x: self.frame.width/3.2, y: self.frame.height/6)
+        personalBestLabel.fontColor = SKColor(red: 236.0/255.0, green: 240.0/255.0, blue: 241.0/255.0, alpha: 1.0)
+        personalBestLabel.text = "Best: "
+        addChild(personalBestLabel)
+        
+        personalBestCountLabel = SKLabelNode(fontNamed: "AvenirNext")
+        personalBestCountLabel.fontSize = 15
+        personalBestCountLabel.position = CGPoint(x: self.frame.width/2.4, y: self.frame.height/6)
+        personalBestCountLabel.fontColor = SKColor(red: 236.0/255.0, green: 240.0/255.0, blue: 241.0/255.0, alpha: 1.0)
+        personalBestCountLabel.text = "\(maxLevel - 1)"
+        addChild(personalBestCountLabel)
     }
     
+    // Create the Cross background
     func createCrossHairsBG() {
         // Vertical Row Container
         let verticalRect = SKSpriteNode(color: UIColor.blackColor(), size: CGSize(width: 50, height: 320))
         verticalRect.position = CGPoint(x: frame.size.width/2, y: frame.size.height/2)
         verticalRect.zPosition = 0
         addChild(verticalRect)
-    
+        
         // Horizonatal Row Container
         let horizontalRect = SKSpriteNode(color: UIColor.blackColor(), size: CGSize(width: 320, height: 50))
         horizontalRect.position = CGPoint(x: frame.size.width/2, y: frame.size.height/2)
         addChild(horizontalRect)
     }
     
+    // Create indivdual squares
     func createSquare(position: CGPoint) -> SKSpriteNode {
         let square = SKSpriteNode(color: UIColor.lightGrayColor(), size: CGSize(width: 40,height: 40))
         square.position = position
@@ -226,8 +271,9 @@ class GameScene: SKScene {
         
         return square
     }
-
-    func targetSquare() {
+    
+    // Create the moving square
+    func createMovingSquare() {
         movingSquare = createSquare(CGPoint(x: -200, y: -200))
         movingSquare.color = UIColor.yellowColor()
         movingSquare.zPosition = 2
@@ -239,6 +285,7 @@ class GameScene: SKScene {
     
     // MARK: - Move behaviors
     
+    // Randomly assign square moving direction. Horizontal or Vertical
     func setRandomMovingSquareDirection() {
         let randNumber = Int(arc4random_uniform(UInt32(2)))
         
@@ -249,6 +296,7 @@ class GameScene: SKScene {
         }
     }
     
+    // Randomly assign square starting side. Left, Right, Top, or Bottom
     func setRandomSquareStartSide() {
         let randNumber = Int(arc4random_uniform(UInt32(2)))
         
@@ -261,8 +309,8 @@ class GameScene: SKScene {
         }
     }
     
+    // Move the moving square
     func moveTargetSquare() {
-        
         // Horizontal Row
         if isHorizontal == true {
             movingSquare.position = movingSquareHorizontalPosArray[arrayIndexNumber]
@@ -301,20 +349,37 @@ class GameScene: SKScene {
     func playSound(sound : SKAction) {
         runAction(sound)
     }
+    
+    
+    // MARK: -  Game Center High Score
+    
+    func saveHighScore(score: Int) {
+        // Check if the player is authenticated in GameCenter
+        if GKLocalPlayer.localPlayer().authenticated {
+            
+            // Retrieve the leaderboard for the game
+            let scoreReporter = GKScore(leaderboardIdentifier: "CenterLock_Leaderboard")
+            scoreReporter.value = Int64(score)
 
+            // Store the scores in an array
+            let scoreArray: [GKScore] = [scoreReporter]
+            
+            // Report scores to GameCenter
+            GKScore.reportScores(scoreArray, withCompletionHandler: { (error) -> Void in
+                if error != nil {
+                    print("Reporting Scores to GameCenter")
+                } else {
+                    print("Error \(error)")
+                }
+            })
+        }
+    }
+    
     
     // MARK: - Level Completed
     
-    func levelCompleted() {
-        // Disable user interaction.
-        userInteractionEnabled = false
-        
-        gameStarted = false
-        print("Win")
-        time.invalidate()
-        arrayIndexNumber = 0
-        movingSquare.color = SKColor.greenColor()
-        
+    // Animate all non-moving squares towards the center
+    func animateSquaresTowardCenter() {
         // Animate the vertical sprites moving toward the center.
         let moveToYCenter = SKAction.moveToY(frame.size.height/2, duration: 0.5)
         
@@ -331,8 +396,29 @@ class GameScene: SKScene {
             sprites.runAction(moveToXCenter)
         }
         
+        // Play the completed level sound.
         playSound(completedSound)
+    }
+    
+    
+    func levelCompleted() {
+        // Set that the game has not started
+        gameStarted = false
         
+        // Disable user interaction until layout is completed
+        userInteractionEnabled = false
+        
+        // Stop the timer calls
+        time.invalidate()
+        
+        arrayIndexNumber = 0
+        movingSquare.color = SKColor.greenColor()
+        personalBestCountLabel.text = "\(maxLevel)"
+        
+        animateSquaresTowardCenter()
+        
+        // Wait for 2 seconds.  Upon completion, remove all children, increase 
+        // the level, and layout a new game
         let actionBack = SKAction.waitForDuration(2.0)
         self.scene?.runAction(SKAction.sequence([actionBack]), completion: { () -> Void in
             self.removeAllChildren()
@@ -351,6 +437,12 @@ class GameScene: SKScene {
         gameStarted = false
         movingSquare.color = SKColor.redColor()
         playSound(errorSound)
+        self.saveHighScore(self.level - 1)
+        
+        if self.level > self.maxLevel {
+            // Save the highest level completed
+            self.saveHighScore(self.level - 1)
+        }
         
         let actionBack = SKAction.waitForDuration(2.0)
         self.scene?.runAction(SKAction.sequence([actionBack]), completion: { () -> Void in

@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		BA1C3B681C2AEB0F00BD59B4 /* completed.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = BA1C3B671C2AEB0F00BD59B4 /* completed.mp3 */; };
 		BA1C3B6A1C2AEC9300BD59B4 /* error.wav in Resources */ = {isa = PBXBuildFile; fileRef = BA1C3B691C2AEC9300BD59B4 /* error.wav */; };
+		BA43D07F1C30128A00B90263 /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BA43D07E1C30128A00B90263 /* iAd.framework */; };
+		BA43D0811C3016CD00B90263 /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA43D0801C3016CD00B90263 /* MenuViewController.swift */; };
+		BA43D0831C30287000B90263 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BA43D0821C30287000B90263 /* GameKit.framework */; };
 		BA75B2871C26CFA200ABA3D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA75B2861C26CFA200ABA3D9 /* AppDelegate.swift */; };
 		BA75B28B1C26CFA200ABA3D9 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA75B28A1C26CFA200ABA3D9 /* GameScene.swift */; };
 		BA75B28D1C26CFA200ABA3D9 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA75B28C1C26CFA200ABA3D9 /* GameViewController.swift */; };
@@ -39,6 +42,9 @@
 /* Begin PBXFileReference section */
 		BA1C3B671C2AEB0F00BD59B4 /* completed.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = completed.mp3; sourceTree = "<group>"; };
 		BA1C3B691C2AEC9300BD59B4 /* error.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = error.wav; sourceTree = "<group>"; };
+		BA43D07E1C30128A00B90263 /* iAd.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iAd.framework; path = System/Library/Frameworks/iAd.framework; sourceTree = SDKROOT; };
+		BA43D0801C3016CD00B90263 /* MenuViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuViewController.swift; sourceTree = "<group>"; };
+		BA43D0821C30287000B90263 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
 		BA75B2831C26CFA200ABA3D9 /* CrossHairs.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CrossHairs.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BA75B2861C26CFA200ABA3D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BA75B28A1C26CFA200ABA3D9 /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
@@ -60,6 +66,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BA43D07F1C30128A00B90263 /* iAd.framework in Frameworks */,
+				BA43D0831C30287000B90263 /* GameKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -92,6 +100,8 @@
 		BA75B27A1C26CFA100ABA3D9 = {
 			isa = PBXGroup;
 			children = (
+				BA43D0821C30287000B90263 /* GameKit.framework */,
+				BA43D07E1C30128A00B90263 /* iAd.framework */,
 				BA75B2851C26CFA200ABA3D9 /* CrossHairs */,
 				BA75B29E1C26CFA200ABA3D9 /* CrossHairsTests */,
 				BA75B2A91C26CFA200ABA3D9 /* CrossHairsUITests */,
@@ -116,6 +126,7 @@
 				BA75B2861C26CFA200ABA3D9 /* AppDelegate.swift */,
 				BA75B28A1C26CFA200ABA3D9 /* GameScene.swift */,
 				BA75B28C1C26CFA200ABA3D9 /* GameViewController.swift */,
+				BA43D0801C3016CD00B90263 /* MenuViewController.swift */,
 				BA75B28E1C26CFA200ABA3D9 /* Main.storyboard */,
 				BA75B2911C26CFA200ABA3D9 /* Assets.xcassets */,
 				BA75B2931C26CFA200ABA3D9 /* LaunchScreen.storyboard */,
@@ -211,6 +222,11 @@
 					BA75B2821C26CFA200ABA3D9 = {
 						CreatedOnToolsVersion = 7.2;
 						DevelopmentTeam = M77G4VQ69B;
+						SystemCapabilities = {
+							com.apple.GameCenter = {
+								enabled = 1;
+							};
+						};
 					};
 					BA75B29A1C26CFA200ABA3D9 = {
 						CreatedOnToolsVersion = 7.2;
@@ -279,6 +295,7 @@
 				BA75B28B1C26CFA200ABA3D9 /* GameScene.swift in Sources */,
 				BA75B28D1C26CFA200ABA3D9 /* GameViewController.swift in Sources */,
 				BA75B2871C26CFA200ABA3D9 /* AppDelegate.swift in Sources */,
+				BA43D0811C3016CD00B90263 /* MenuViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

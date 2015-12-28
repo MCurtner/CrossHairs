@@ -8,17 +8,19 @@
 
 import UIKit
 import SpriteKit
+import iAd
 
 class GameViewController: UIViewController {
-    
+        
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        UIViewController.prepareInterstitialAds()
+        self.interstitialPresentationPolicy = .Automatic
         
         let scene = GameScene(size: view.bounds.size)
         // Configure the view.
         let skView = self.view as! SKView
-        skView.showsFPS = true
-        skView.showsNodeCount = true
         
         /* Sprite Kit applies additional optimizations to improve rendering performance */
         skView.ignoresSiblingOrder = true
@@ -27,10 +29,6 @@ class GameViewController: UIViewController {
         scene.scaleMode = .AspectFill
         
         skView.presentScene(scene)
-    }
-    
-    override func shouldAutorotate() -> Bool {
-        return true
     }
     
     override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
@@ -48,5 +46,11 @@ class GameViewController: UIViewController {
     
     override func prefersStatusBarHidden() -> Bool {
         return true
+    }
+    
+    // MARK: Menu Button Action
+    
+    @IBAction func menuButtonWasPressed(sender: AnyObject) {
+        dismissViewControllerAnimated(true, completion: nil)
     }
 }
