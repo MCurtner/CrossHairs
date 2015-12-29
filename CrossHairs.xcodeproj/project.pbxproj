@@ -20,6 +20,7 @@
 		BA75B2951C26CFA200ABA3D9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BA75B2931C26CFA200ABA3D9 /* LaunchScreen.storyboard */; };
 		BA75B2A01C26CFA200ABA3D9 /* CrossHairsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA75B29F1C26CFA200ABA3D9 /* CrossHairsTests.swift */; };
 		BA75B2AB1C26CFA200ABA3D9 /* CrossHairsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA75B2AA1C26CFA200ABA3D9 /* CrossHairsUITests.swift */; };
+		BAE3F7011C31BDA000024FE5 /* game_font_7.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BAE3F7001C31BDA000024FE5 /* game_font_7.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +60,7 @@
 		BA75B2A61C26CFA200ABA3D9 /* CrossHairsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CrossHairsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BA75B2AA1C26CFA200ABA3D9 /* CrossHairsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrossHairsUITests.swift; sourceTree = "<group>"; };
 		BA75B2AC1C26CFA200ABA3D9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BAE3F7001C31BDA000024FE5 /* game_font_7.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = game_font_7.ttf; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,6 +124,7 @@
 		BA75B2851C26CFA200ABA3D9 /* CrossHairs */ = {
 			isa = PBXGroup;
 			children = (
+				BAE3F7001C31BDA000024FE5 /* game_font_7.ttf */,
 				BA1C3B661C2AEB0700BD59B4 /* Sounds */,
 				BA75B2861C26CFA200ABA3D9 /* AppDelegate.swift */,
 				BA75B28A1C26CFA200ABA3D9 /* GameScene.swift */,
@@ -266,6 +269,7 @@
 				BA75B2951C26CFA200ABA3D9 /* LaunchScreen.storyboard in Resources */,
 				BA75B2921C26CFA200ABA3D9 /* Assets.xcassets in Resources */,
 				BA1C3B6A1C2AEC9300BD59B4 /* error.wav in Resources */,
+				BAE3F7011C31BDA000024FE5 /* game_font_7.ttf in Resources */,
 				BA75B2901C26CFA200ABA3D9 /* Main.storyboard in Resources */,
 				BA1C3B681C2AEB0F00BD59B4 /* completed.mp3 in Resources */,
 			);

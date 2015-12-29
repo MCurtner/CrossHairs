@@ -51,7 +51,7 @@ class GameScene: SKScene {
     
     override init(size: CGSize) {
         super.init(size: size)
-    
+        
         // Horizontal and Vertical Arrays for square positions
         horizontalPosArray = [
             CGPoint(x: frame.size.width/2 - 135, y: frame.size.height/2),
@@ -183,11 +183,14 @@ class GameScene: SKScene {
         // Check is current level is greater than max level
         if level > maxLevel {
             // Set the new best level reached
-            NSUserDefaults.standardUserDefaults().setInteger(level, forKey: "maxLevel")
+            NSUserDefaults.standardUserDefaults().setInteger(level - 1, forKey: "maxLevel")
+            maxLevel = NSUserDefaults.standardUserDefaults().integerForKey("maxLevel")
         }
         
         // Setup Labels and Cross background
         setupLabels()
+        
+        personalBestCountLabel.text = "\(maxLevel)"
         createCrossHairsBG()
         
         // Load squares
@@ -205,47 +208,46 @@ class GameScene: SKScene {
         movesRemaining = level
         
         // Tap To Start
-        tapToStartLabel = SKLabelNode(fontNamed: "AvenirNext-Bold")
+        tapToStartLabel = SKLabelNode(fontNamed: "GameFont7")
         tapToStartLabel.position = CGPoint(x: self.frame.width/2, y: self.frame.height/2 + self.frame.height/2.5)
         tapToStartLabel.fontColor = SKColor(red: 236.0/255.0, green: 240.0/255.0, blue: 241.0/255.0, alpha: 1.0)
         tapToStartLabel.text = "Tap To Start"
         addChild(tapToStartLabel)
         
         // Level
-        levelLabel = SKLabelNode(fontNamed: "AvenirNext-Bold")
+        levelLabel = SKLabelNode(fontNamed: "GameFont7")
         levelLabel.position = CGPoint(x: self.frame.width/2, y: self.frame.height/2 + self.frame.height/3)
         levelLabel.fontColor = SKColor(red: 236.0/255.0, green: 240.0/255.0, blue: 241.0/255.0, alpha: 1.0)
         levelLabel.text = "Level \(level)"
         addChild(levelLabel)
         
         // Remaining:
-        remainingLabel = SKLabelNode(fontNamed: "AvenirNext")
-        remainingLabel.fontSize = 15
+        remainingLabel = SKLabelNode(fontNamed: "GameFont7")
+        remainingLabel.fontSize = 20
         remainingLabel.position = CGPoint(x: self.frame.width/1.5, y: self.frame.height/6)
         remainingLabel.fontColor = SKColor(red: 236.0/255.0, green: 240.0/255.0, blue: 241.0/255.0, alpha: 1.0)
         remainingLabel.text = "Remaining: "
         addChild(remainingLabel)
         
-        remainingCount = SKLabelNode(fontNamed: "AvenirNext")
-        remainingCount.fontSize = 15
+        remainingCount = SKLabelNode(fontNamed: "GameFont7")
+        remainingCount.fontSize = 20
         remainingCount.position = CGPoint(x: self.frame.width/1.2, y: self.frame.height/6)
         remainingCount.fontColor = SKColor(red: 236.0/255.0, green: 240.0/255.0, blue: 241.0/255.0, alpha: 1.0)
         remainingCount.text = "\(movesRemaining)"
         addChild(remainingCount)
         
         // Personal Best
-        personalBestLabel = SKLabelNode(fontNamed: "AvenirNext")
-        personalBestLabel.fontSize = 15
+        personalBestLabel = SKLabelNode(fontNamed: "GameFont7")
+        personalBestLabel.fontSize = 20
         personalBestLabel.position = CGPoint(x: self.frame.width/3.2, y: self.frame.height/6)
         personalBestLabel.fontColor = SKColor(red: 236.0/255.0, green: 240.0/255.0, blue: 241.0/255.0, alpha: 1.0)
         personalBestLabel.text = "Best: "
         addChild(personalBestLabel)
         
-        personalBestCountLabel = SKLabelNode(fontNamed: "AvenirNext")
-        personalBestCountLabel.fontSize = 15
+        personalBestCountLabel = SKLabelNode(fontNamed: "GameFont7")
+        personalBestCountLabel.fontSize = 20
         personalBestCountLabel.position = CGPoint(x: self.frame.width/2.4, y: self.frame.height/6)
         personalBestCountLabel.fontColor = SKColor(red: 236.0/255.0, green: 240.0/255.0, blue: 241.0/255.0, alpha: 1.0)
-        personalBestCountLabel.text = "\(maxLevel - 1)"
         addChild(personalBestCountLabel)
     }
     
@@ -360,7 +362,7 @@ class GameScene: SKScene {
             // Retrieve the leaderboard for the game
             let scoreReporter = GKScore(leaderboardIdentifier: "CenterLock_Leaderboard")
             scoreReporter.value = Int64(score)
-
+            
             // Store the scores in an array
             let scoreArray: [GKScore] = [scoreReporter]
             
@@ -400,8 +402,9 @@ class GameScene: SKScene {
         playSound(completedSound)
     }
     
+    // Stop the timer, disable user interaction and stop the game
     
-    func levelCompleted() {
+    func prepareGameEnded() {
         // Set that the game has not started
         gameStarted = false
         
@@ -410,20 +413,28 @@ class GameScene: SKScene {
         
         // Stop the timer calls
         time.invalidate()
+    }
+    
+    // Level is completed
+    
+    func levelCompleted() {
+        prepareGameEnded()
         
         arrayIndexNumber = 0
+        
+        // Set moving square to green
         movingSquare.color = SKColor.greenColor()
-        personalBestCountLabel.text = "\(maxLevel)"
         
         animateSquaresTowardCenter()
         
-        // Wait for 2 seconds.  Upon completion, remove all children, increase 
+        // Wait for 2 seconds.  Upon completion, remove all children, increase
         // the level, and layout a new game
         let actionBack = SKAction.waitForDuration(2.0)
         self.scene?.runAction(SKAction.sequence([actionBack]), completion: { () -> Void in
             self.removeAllChildren()
             self.level++
             self.layoutGame()
+            //self.personalBestCountLabel.text = "\(self.maxLevel)"
         })
     }
     
@@ -431,13 +442,11 @@ class GameScene: SKScene {
     // MARK: - Game Over
     
     func gameOver() {
-        userInteractionEnabled = false
-        print("Lose")
-        time.invalidate()
-        gameStarted = false
+        prepareGameEnded()
+        
+        // Set moving square to red
         movingSquare.color = SKColor.redColor()
         playSound(errorSound)
-        self.saveHighScore(self.level - 1)
         
         if self.level > self.maxLevel {
             // Save the highest level completed
